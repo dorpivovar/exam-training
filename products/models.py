@@ -9,6 +9,7 @@ class Product(models.Model):
     sku = models.CharField(max_length=50, unique=True, verbose_name='Артикул')
     created_at = models.DateField(auto_now_add=True, verbose_name='Дата создания')
     stock = models.IntegerField(default=0, verbose_name='Кол-во на складе')
+    is_active = models.BooleanField(default=True, null=False, verbose_name='Активность')
 
     def __str__(self):
         return self.name
@@ -21,6 +22,8 @@ class Product(models.Model):
             raise ValidationError({'sku': 'Товар с таким артикулом уже существует'})
         if self.stock < 0:
             raise ValidationError({'stock': 'Количество на складе не может быть отрицательным'})
+        if not self.is_active or self.is_active == '':
+            raise ValidationError({'is_active': 'Активность не может быть пустой'})
     
     def save(self, *args, **kwargs):
         self.full_clean()
